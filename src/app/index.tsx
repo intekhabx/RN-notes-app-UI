@@ -1,98 +1,126 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { SafeAreaView } from "react-native-safe-area-context";
+import Notes from "@/components/Notes";
+import { useWindowDimensions } from "react-native";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Search from "@/components/Search";
+import { Children, useState } from "react";
+import { darkTheme, lightTheme } from "@/theme";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+const HomeScreen = () => {
+  const [isDark, setIsDark] = useState(true);
+
+  const theme = isDark ? darkTheme : lightTheme;
+
+  const { height, width } = useWindowDimensions();
+
+  const NOTES = [1, 2, 3, 3, 2, 4, 2, 4, 2, 4, 2, 4];
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.bg }]}>
+      
+      {/* TOP HEADER */}
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: theme.text }]}>
+          MY NOTES
+        </Text>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+        <Pressable onPress={() => setIsDark(!isDark)}>
+          <FontAwesome5
+            name={isDark ? "moon" : "sun"}
+            size={26}
+            color={theme.primary}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        </Pressable>
+      </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* SECOND TOP VIEW */}
+      <View style={[styles.tabs, { backgroundColor: theme.card }]}>
+        
+        <View style={[styles.tabItem, { backgroundColor: theme.bg }]}>
+          <MaterialCommunityIcons
+            name="format-list-bulleted"
+            size={22}
+            color={theme.primary}
+          />
+          <Text style={[styles.tabText, { color: theme.text }]}>
+            Notes
+          </Text>
+        </View>
+
+        <View style={styles.tabItem}>
+          <FontAwesome name="pencil-square-o" size={22} color={theme.text} />
+          <Text style={[styles.tabText, { color: theme.text }]}>
+            Add
+          </Text>
+        </View>
+      </View>
+
+      {/* SEARCH */}
+      <Search theme={theme} />
+
+      {/* NOTES LIST */}
+      <FlatList
+        style={{ backgroundColor: theme.card, borderRadius: 18 }}
+        data={NOTES}
+        renderItem={() => <Notes theme={theme} />}
+        keyExtractor={(item, index) => index.toString()}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        contentContainerStyle={{ margin: 10 }}
+      />
+    </SafeAreaView>
   );
-}
+};
+
+export default HomeScreen;
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    padding: 10,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 14,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
+
   title: {
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: "bold",
   },
-  code: {
-    textTransform: 'uppercase',
+
+  tabs: {
+    borderRadius: 14,
+    padding: 5,
+    flexDirection: "row",
+    gap: 5,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  tabItem: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 14,
+    justifyContent: "center",
+  },
+
+  tabText: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
