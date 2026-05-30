@@ -13,7 +13,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Search from "@/components/Search";
-import { Children, useState } from "react";
+import { useState } from "react";
 import { darkTheme, lightTheme } from "@/theme";
 
 const HomeScreen = () => {
@@ -21,7 +21,8 @@ const HomeScreen = () => {
 
   const theme = isDark ? darkTheme : lightTheme;
 
-  const { height, width } = useWindowDimensions();
+  // const { height, width } = useWindowDimensions();
+  // console.log(height, width);
 
   const NOTES = [1, 2, 3, 3, 2, 4, 2, 4, 2, 4, 2, 4];
 

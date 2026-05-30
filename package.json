@@ -1,5 +1,5 @@
 {
-  "name": "two_stylesheet-and-component",
+  "name": "notes-app-ui",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
